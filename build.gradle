@@ -15,7 +15,7 @@ targetCompatibility = '1.8'
 
 group = 'org.blockjam'
 archivesBaseName = project.name.toLowerCase()
-description = 'The core plugin used by BlockJam.'
+description = 'Shared code between the BlockJam plugins and minigames.'
 version = '1.0.0-SNAPSHOT'
 ext.url = 'https://blockjam.org/'
 
