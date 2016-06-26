@@ -30,7 +30,7 @@ import org.spongepowered.api.text.format.TextColors;
 /**
  * Static utility class for storing constant values.
  */
-public class CoreConstants {
+public final class CoreConstants {
 
     /**
      * Contains colors for uniformity throughout UI.
