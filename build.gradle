@@ -1,0 +1,98 @@
+plugins {
+    id 'java'
+    id 'maven'
+
+    id 'idea'
+    id 'eclipse'
+
+    id 'org.spongepowered.plugin' version '0.6'
+    id 'net.minecrell.licenser' version '0.2.1'
+}
+defaultTasks 'clean', 'licenseFormat'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+group = 'org.blockjam'
+archivesBaseName = project.name.toLowerCase()
+description = 'The core plugin used by BlockJam.'
+version = '1.0.0-SNAPSHOT'
+ext.url = 'https://blockjam.org/'
+
+repositories {
+    mavenCentral()
+    maven {
+        name 'sponge'
+        url 'http://repo.spongepowered.org/maven'
+    }
+}
+
+dependencies {
+    compile 'org.spongepowered:spongeapi:5.0.0-SNAPSHOT'
+}
+
+license {
+    header file('HEADER.txt')
+    include '**/*.java'
+}
+
+task javadocJar(type: Jar, dependsOn: 'javadoc') {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+
+task sourcesJar(type: Jar, dependsOn: 'classes') {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            if (System.getenv('MAVEN_RELEASES') != null) {
+                repository(url: 'file://' + System.getenv('MAVEN_RELEASES'))
+                snapshotRepository(url: 'file://' + System.getenv('MAVEN_SNAPSHOTS'))
+            }
+
+            pom {
+                artifactId = project.archivesBaseName
+
+                project {
+                    name = project.name
+                    description = project.description
+                    packaging = 'jar'
+                    url = project.url
+
+                    scm {
+                        url = "https://github.com/BlockJamMC/BlockJamCore"
+                        connection = "scm:git:https://github.com/BlockJamMC/BlockJamCore.git"
+                        developerConnection = "scm:git:git@github.com:BlockJamMC/BlockJamCore.git"
+                    }
+
+                    issueManagement {
+                        system = 'GitHub'
+                        url = 'https://github.com/BlockJamMC/BlockJamCore/issues'
+                    }
+
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'http://opensource.org/licenses/MIT'
+                            distribution = 'repo'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.13'
+}
