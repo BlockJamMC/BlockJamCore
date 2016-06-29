@@ -28,7 +28,7 @@ package org.blockjam.core.util.config;
 public class ConfigKey<T> {
     private final String[] path;
 
-    protected ConfigKey(String... path) {
+    public ConfigKey(String... path) {
         this.path = path;
     }
 
