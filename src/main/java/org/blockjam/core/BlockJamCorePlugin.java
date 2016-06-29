@@ -24,9 +24,79 @@
 
 package org.blockjam.core;
 
+import com.google.common.io.CharStreams;
+import com.google.inject.Inject;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.blockjam.core.util.config.ConfigHandler;
+import org.blockjam.core.util.config.CoreConfigKey;
+import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 @Plugin(id = "blockjamcore", name = "BlockJamCore")
 public final class BlockJamCorePlugin {
 
+    public static BlockJamCorePlugin instance;
+
+    @Inject @DefaultConfig(sharedRoot = false) private File configFile;
+    @Inject @DefaultConfig(sharedRoot = false) private ConfigurationLoader<CommentedConfigurationNode> configLoader;
+
+    private ConfigHandler configHandler;
+
+    //TODO: make this extendable?
+    @Listener
+    public void onPreInitlization(GameInitializationEvent event){
+        instance = this;
+
+        try {
+            configHandler = new ConfigHandler(configFile, configLoader);
+            configHandler.loadDefaults();
+        } catch (IOException ex) {
+            throw new RuntimeException("Failed to load config");
+        }
+    }
+
+    public static BlockJamCorePlugin instance() {
+        return instance;
+    }
+
+    public static ConfigHandler config() {
+        return instance().configHandler;
+    }
+
+    public static String getFromAuthority(String key) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection)
+                    new URL(config().get(CoreConfigKey.AUTHORITY_URL)).openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestMethod("POST");
+            byte[] params = ("key="+key).getBytes(StandardCharsets.UTF_8);
+            connection.setFixedLengthStreamingMode(params.length);
+            connection.connect();
+            OutputStream os = connection.getOutputStream();
+            os.write(params);
+            return CharStreams.toString(
+                    new InputStreamReader(connection.getInputStream(),
+                            StandardCharsets.UTF_8));
+        }
+        catch (MalformedURLException ex) {
+            throw new RuntimeException("seed-get-url has not been defined " +
+                    "properly in plugins global config", ex);
+        }
+        catch (IOException ex) {
+            throw new RuntimeException("could not connect(or connection was broken) " +
+                    "to URL that seed-get-url has defined in plugins config", ex);
+        }
+    }
 }
