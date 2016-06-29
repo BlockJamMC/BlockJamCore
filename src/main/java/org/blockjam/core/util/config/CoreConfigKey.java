@@ -24,8 +24,6 @@
 
 package org.blockjam.core.util.config;
 
-import org.blockjam.core.util.config.ConfigKey;
-
 public class CoreConfigKey<T> extends ConfigKey<T> {
     public static final ConfigKey<String> AUTHORITY_URL = new ConfigKey<>("authority-url");
 }

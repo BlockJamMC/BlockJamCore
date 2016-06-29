@@ -4,6 +4,7 @@ plugins {
 
     id 'idea'
     id 'eclipse'
+    id 'checkstyle'
 
     id 'org.spongepowered.plugin' version '0.6'
     id 'net.minecrell.licenser' version '0.2.1'
@@ -29,11 +30,27 @@ repositories {
 
 dependencies {
     compile 'org.spongepowered:spongeapi:5.0.0-SNAPSHOT'
+
+    checkstyle 'org.spongepowered:checkstyle:6.1.1-sponge1'
 }
 
 license {
     header file('HEADER.txt')
     include '**/*.java'
+}
+
+// check code style
+checkstyle {
+    configProperties = [
+            'name'        : project.name,
+            'basedir': project.projectDir,
+            'severity': 'warning'
+    ]
+    configFile = file('etc/checkstyle.xml')
+}
+
+tasks.withType(Checkstyle){
+    exclude '**/*.properties'
 }
 
 task javadocJar(type: Jar, dependsOn: 'javadoc') {

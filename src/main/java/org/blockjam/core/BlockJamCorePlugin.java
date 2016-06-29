@@ -56,7 +56,7 @@ public final class BlockJamCorePlugin {
 
     //TODO: make this extendable?
     @Listener
-    public void onPreInitlization(GameInitializationEvent event){
+    public void onPreInitlization(GameInitializationEvent event) {
         instance = this;
 
         try {
@@ -81,7 +81,7 @@ public final class BlockJamCorePlugin {
                     new URL(config().get(CoreConfigKey.AUTHORITY_URL)).openConnection();
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
-            byte[] params = ("key="+key).getBytes(StandardCharsets.UTF_8);
+            byte[] params = ("key=" + key).getBytes(StandardCharsets.UTF_8);
             connection.setFixedLengthStreamingMode(params.length);
             connection.connect();
             OutputStream os = connection.getOutputStream();
@@ -89,14 +89,10 @@ public final class BlockJamCorePlugin {
             return CharStreams.toString(
                     new InputStreamReader(connection.getInputStream(),
                             StandardCharsets.UTF_8));
-        }
-        catch (MalformedURLException ex) {
-            throw new RuntimeException("seed-get-url has not been defined " +
-                    "properly in plugins global config", ex);
-        }
-        catch (IOException ex) {
-            throw new RuntimeException("could not connect(or connection was broken) " +
-                    "to URL that seed-get-url has defined in plugins config", ex);
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException("Invalid value for `authority-url` in config", ex);
+        } catch (IOException ex) {
+            throw new RuntimeException("Failed to connect to authority service", ex);
         }
     }
 }
