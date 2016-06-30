@@ -22,17 +22,15 @@
  * THE SOFTWARE.
  */
 
-package org.blockjam.core.util.config;
+package org.blockjam.core.config;
 
-//TODO: make it so you do not have to extend this, possibly by using mixins?
-public class ConfigKey<T> {
-    private final String[] path;
+import static org.blockjam.core.config.ConfigKey.of;
 
-    public ConfigKey(String... path) {
-        this.path = path;
-    }
+/**
+ * A list of all available config keys from BlockJamCore.
+ */
+public final class ConfigKeys {
 
-    public String[] getPath() {
-        return path;
-    }
+    public static final ConfigKey<String> AUTHORITY_URL = of("authority-url");
+
 }

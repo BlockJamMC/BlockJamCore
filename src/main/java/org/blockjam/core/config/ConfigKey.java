@@ -22,8 +22,35 @@
  * THE SOFTWARE.
  */
 
-package org.blockjam.core.util.config;
+package org.blockjam.core.config;
 
-public class CoreConfigKey<T> extends ConfigKey<T> {
-    public static final ConfigKey<String> AUTHORITY_URL = new ConfigKey<>("authority-url");
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * Represents a configuration key.
+ *
+ * @param <T> The type of which the key represents
+ */
+public final class ConfigKey<T> {
+
+    private final String[] path;
+
+    protected ConfigKey(String[] path) {
+        this.path = path;
+    }
+
+    /**
+     * Returns the path of this configuration key.
+     *
+     * @return The path
+     */
+    public final String[] getPath() {
+        return this.path;
+    }
+
+    public static <T> ConfigKey<T> of(String... path) {
+        checkNotNull(path, "path is null!");
+        return new ConfigKey<>(path);
+    }
+
 }
