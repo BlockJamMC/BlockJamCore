@@ -28,8 +28,8 @@ import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.blockjam.core.util.config.ConfigHandler;
-import org.blockjam.core.util.config.CoreConfigKey;
+import org.blockjam.core.config.ConfigKeys;
+import org.blockjam.core.config.ConfigManager;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -43,6 +43,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @Plugin(id = "blockjamcore", name = "BlockJamCore")
 public final class BlockJamCorePlugin {
@@ -52,7 +53,7 @@ public final class BlockJamCorePlugin {
     @Inject @DefaultConfig(sharedRoot = false) private File configFile;
     @Inject @DefaultConfig(sharedRoot = false) private ConfigurationLoader<CommentedConfigurationNode> configLoader;
 
-    private ConfigHandler configHandler;
+    private ConfigManager configManager;
 
     //TODO: make this extendable?
     @Listener
@@ -60,8 +61,8 @@ public final class BlockJamCorePlugin {
         instance = this;
 
         try {
-            configHandler = new ConfigHandler(configFile, configLoader);
-            configHandler.loadDefaults();
+            configManager = new ConfigManager(configFile, configLoader);
+            configManager.loadDefaults();
         } catch (IOException ex) {
             throw new RuntimeException("Failed to load config");
         }
@@ -71,14 +72,15 @@ public final class BlockJamCorePlugin {
         return instance;
     }
 
-    public static ConfigHandler config() {
-        return instance().configHandler;
+    public static ConfigManager config() {
+        return instance().configManager;
     }
 
     public static String getFromAuthority(String key) {
+        Optional<String> url = config().get(ConfigKeys.AUTHORITY_URL);
+        assert url.isPresent();
         try {
-            HttpURLConnection connection = (HttpURLConnection)
-                    new URL(config().get(CoreConfigKey.AUTHORITY_URL)).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL(url.get()).openConnection();
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
             byte[] params = ("key=" + key).getBytes(StandardCharsets.UTF_8);

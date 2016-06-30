@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockjam.core.util.config;
+package org.blockjam.core.config;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -32,21 +32,25 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Optional;
 
-public final class ConfigHandler {
+/**
+ * A manager for the configuration.
+ */
+public class ConfigManager {
 
     private final File configFile;
     private final ConfigurationLoader<?> loader;
     private ConfigurationNode config;
 
-    public ConfigHandler(File configFile, ConfigurationLoader<?> loader) throws IOException {
+    public ConfigManager(File configFile, ConfigurationLoader<?> loader) throws IOException {
         this.configFile = configFile;
         this.loader = loader;
         this.config = loader.load();
     }
 
     public void loadDefaults() throws IOException {
-        URL defaultsInJarURL = ConfigHandler.class.getResource("/default.conf");
+        URL defaultsInJarURL = ConfigManager.class.getResource("/default.conf");
         ConfigurationLoader defaultsLoader = HoconConfigurationLoader.builder().setURL(defaultsInJarURL).build();
         ConfigurationNode defaults = defaultsLoader.load();
 
@@ -57,9 +61,8 @@ public final class ConfigHandler {
         loader.save(config);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T get(ConfigKey<T> key) {
-        return (T) config.getNode((Object[]) key.getPath()).getValue();
+    public <T> Optional<T> get(ConfigKey<T> key) {
+        return Optional.ofNullable((T) this.config.getNode(key.getPath()).getValue());
     }
 
 }
