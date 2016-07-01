@@ -61,8 +61,9 @@ public class ConfigManager {
         loader.save(config);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Optional<T> get(ConfigKey<T> key) {
-        return Optional.ofNullable((T) this.config.getNode(key.getPath()).getValue());
+        return Optional.ofNullable((T) this.config.getNode((Object) key.getPath()).getValue());
     }
 
 }
