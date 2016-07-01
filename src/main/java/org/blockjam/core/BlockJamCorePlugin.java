@@ -35,6 +35,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -76,7 +77,7 @@ public final class BlockJamCorePlugin {
         return instance().configManager;
     }
 
-    public static String getFromAuthority(String key) {
+    public static byte[] getFromAuthority(String key) {
         Optional<String> url = config().get(ConfigKeys.AUTHORITY_URL);
         assert url.isPresent();
         try {
@@ -88,9 +89,13 @@ public final class BlockJamCorePlugin {
             connection.connect();
             OutputStream os = connection.getOutputStream();
             os.write(params);
-            return CharStreams.toString(
-                    new InputStreamReader(connection.getInputStream(),
-                            StandardCharsets.UTF_8));
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int i;
+            while ((i = connection.getInputStream().read(buffer)) != -1) {
+                baos.write(buffer, 0, i);
+            }
+            return baos.toByteArray();
         } catch (MalformedURLException ex) {
             throw new RuntimeException("Invalid value for `authority-url` in config", ex);
         } catch (IOException ex) {
