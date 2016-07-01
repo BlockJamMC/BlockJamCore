@@ -77,7 +77,7 @@ public final class BlockJamCorePlugin {
         return instance().configManager;
     }
 
-    public static byte[] getFromAuthority(String key) {
+    public static byte[] getFromAuthority(String key) throws IOException {
         Optional<String> url = config().get(ConfigKeys.AUTHORITY_URL);
         assert url.isPresent();
         try {
@@ -87,6 +87,13 @@ public final class BlockJamCorePlugin {
             byte[] params = ("key=" + key).getBytes(StandardCharsets.UTF_8);
             connection.setFixedLengthStreamingMode(params.length);
             connection.connect();
+
+            if (connection.getResponseCode() / 100 != 2) {
+                // this just gets caught down below
+                throw new IOException("Received bad response code from authority server ("
+                        + connection.getResponseCode() + " " + connection.getResponseMessage() + ")");
+            }
+
             OutputStream os = connection.getOutputStream();
             os.write(params);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -97,9 +104,9 @@ public final class BlockJamCorePlugin {
             }
             return baos.toByteArray();
         } catch (MalformedURLException ex) {
-            throw new RuntimeException("Invalid value for `authority-url` in config", ex);
+            throw new RuntimeException("Invalid config value for `authority-url`", ex);
         } catch (IOException ex) {
-            throw new RuntimeException("Failed to connect to authority service", ex);
+            throw new RuntimeException("Encountered connection error while contacting authority server", ex);
         }
     }
 }
