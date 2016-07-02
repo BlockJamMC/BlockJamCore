@@ -24,6 +24,8 @@
 
 package org.blockjam.core.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -32,7 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.Optional;
 
 /**
  * A manager for the configuration.
@@ -62,8 +63,10 @@ public class ConfigManager {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Optional<T> get(ConfigKey<T> key) {
-        return Optional.ofNullable((T) this.config.getNode((Object) key.getPath()).getValue());
+    public <T> T get(ConfigKey<T> key) {
+        T value = (T) this.config.getNode((Object[]) key.getPath()).getValue();
+        checkNotNull(value, "Cannot retrieve non-existent config key");
+        return value;
     }
 
 }

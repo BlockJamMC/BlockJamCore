@@ -24,7 +24,6 @@
 
 package org.blockjam.core;
 
-import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -38,13 +37,11 @@ import org.spongepowered.api.plugin.Plugin;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 @Plugin(id = "blockjamcore", name = "BlockJamCore")
 public final class BlockJamCorePlugin {
@@ -78,10 +75,9 @@ public final class BlockJamCorePlugin {
     }
 
     public static byte[] getFromAuthority(String key) throws IOException {
-        Optional<String> url = config().get(ConfigKeys.AUTHORITY_URL);
-        assert url.isPresent();
+        String url = config().get(ConfigKeys.AUTHORITY_URL);
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(url.get()).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
             byte[] params = ("key=" + key).getBytes(StandardCharsets.UTF_8);
