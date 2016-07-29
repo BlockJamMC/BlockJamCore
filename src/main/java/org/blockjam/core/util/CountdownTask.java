@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.blockjam.core.util;
 
 import org.spongepowered.api.Sponge;
@@ -29,22 +30,22 @@ import org.spongepowered.api.text.Text;
 
 import java.util.function.Consumer;
 
-
 /**
  * Counts down on a broadcast channel until
  * runs out and calls function given.
  */
 public class CountdownTask implements Consumer<Task> {
 
-    public interface MessageFunction{
-        public Text f(int timeLeft);
+    public interface MessageFunction {
+
+        Text f(int timeLeft);
     }
 
     private int timeLeft;
     private CountdownTask.MessageFunction messageFunc;
     private Runnable func;
 
-    CountdownTask(int timeToCountdown, CountdownTask.MessageFunction message, Runnable endFunction){
+    public CountdownTask(int timeToCountdown, CountdownTask.MessageFunction message, Runnable endFunction){
         timeLeft = timeToCountdown;
         messageFunc = message;
         func = endFunction;
