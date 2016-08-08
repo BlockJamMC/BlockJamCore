@@ -82,16 +82,15 @@ public final class BlockJamCorePlugin {
             connection.setRequestMethod("POST");
             byte[] params = ("key=" + key).getBytes(StandardCharsets.UTF_8);
             connection.setFixedLengthStreamingMode(params.length);
-            connection.connect();
-
+            OutputStream os = connection.getOutputStream();
+            os.write(params);
+            // connection.connect() can be omitted because getResponseCode() calls it automatically
             if (connection.getResponseCode() / 100 != 2) {
                 // this just gets caught down below
                 throw new IOException("Received bad response code from authority server ("
                         + connection.getResponseCode() + " " + connection.getResponseMessage() + ")");
             }
 
-            OutputStream os = connection.getOutputStream();
-            os.write(params);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
             int i;
