@@ -46,16 +46,15 @@ import java.nio.charset.StandardCharsets;
 @Plugin(id = "blockjamcore", name = "BlockJamCore")
 public final class BlockJamCorePlugin {
 
-    public static BlockJamCorePlugin instance;
+    private static BlockJamCorePlugin instance;
 
     @Inject @DefaultConfig(sharedRoot = false) private File configFile;
     @Inject @DefaultConfig(sharedRoot = false) private ConfigurationLoader<CommentedConfigurationNode> configLoader;
 
     private ConfigManager configManager;
 
-    //TODO: make this extendable?
     @Listener
-    public void onPreInitlization(GameInitializationEvent event) {
+    public void onInitialization(GameInitializationEvent event) {
         instance = this;
 
         try {

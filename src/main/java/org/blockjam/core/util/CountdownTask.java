@@ -36,28 +36,27 @@ import java.util.function.Consumer;
  */
 public class CountdownTask implements Consumer<Task> {
 
-    public interface MessageFunction {
-
-        Text f(int timeLeft);
-    }
-
     private int timeLeft;
     private CountdownTask.MessageFunction messageFunc;
-    private Runnable func;
+    private Runnable announceRunnable;
 
-    public CountdownTask(int timeToCountdown, CountdownTask.MessageFunction message, Runnable endFunction){
-        timeLeft = timeToCountdown;
-        messageFunc = message;
-        func = endFunction;
+    public CountdownTask(int timeToCountdown, CountdownTask.MessageFunction message, Runnable announceRunnable) {
+        this.timeLeft = timeToCountdown;
+        this.messageFunc = message;
+        this.announceRunnable = announceRunnable;
     }
 
     @Override
     public void accept(Task task) {
         --timeLeft;
         Sponge.getServer().getBroadcastChannel().send(messageFunc.f(timeLeft));
-        if(timeLeft <= 0){
-            func.run();
+        if (timeLeft <= 0) {
+            announceRunnable.run();
             task.cancel();
         }
+    }
+
+    public interface MessageFunction {
+        Text f(int timeLeft);
     }
 }
