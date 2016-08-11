@@ -56,6 +56,17 @@ public class BungeeManager {
     }
 
     /**
+     * Transfers the given {@link Player} to the given {@link BungeeServers}.
+     *
+     * @param player The player to transfer
+     * @param server The server to transfer the {@link Player} to
+     */
+    public void transferPlayer(Player player, BungeeServers server) {
+        checkNotNull(server, "server is null!");
+        this.transferPlayer(player, server.toString());
+    }
+
+    /**
      * Transfers all online {@link Player}s to the given server.
      *
      * @param server The server to transfer the {@link Player}s to
@@ -64,6 +75,29 @@ public class BungeeManager {
         checkNotNull(this.channel, "channel is null!");
         checkNotNull(server, "server is null!");
         this.channel.sendToAll(buf -> buf.writeUTF("Connect").writeUTF(server));
+    }
+
+    /**
+     * Transfers all online {@link Player}s to the given {@link BungeeServers}.
+     *
+     * @param server The server to transfer the {@link Player}s to
+     */
+    public void transferAllPlayers(BungeeServers server) {
+        checkNotNull(server, "server is null!");
+        this.transferAllPlayers(server.toString());
+    }
+
+    /**
+     * Kicks the given {@link Player} for the given reason.
+     *
+     * @param player The player to kick from the network
+     * @param reason The reason
+     */
+    public void kickPlayer(Player player, String reason) {
+        checkNotNull(this.channel, "channel is null!");
+        checkNotNull(player, "player is null!");
+        checkNotNull(reason, "reason is null!");
+        this.channel.sendTo(player, buf -> buf.writeUTF("KickPlayer").writeUTF(player.getName()).writeUTF(reason));
     }
 
 }
