@@ -55,4 +55,15 @@ public class BungeeManager {
         this.channel.sendTo(player, buf -> buf.writeUTF("Connect").writeUTF(server));
     }
 
+    /**
+     * Transfers all online {@link Player}s to the given server.
+     *
+     * @param server The server to transfer the {@link Player}s to
+     */
+    public void transferAllPlayers(String server) {
+        checkNotNull(this.channel, "channel is null!");
+        checkNotNull(server, "server is null!");
+        this.channel.sendToAll(buf -> buf.writeUTF("Connect").writeUTF(server));
+    }
+
 }
