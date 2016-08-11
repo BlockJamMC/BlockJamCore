@@ -27,6 +27,7 @@ package org.blockjam.core;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.blockjam.core.bungee.BungeeManager;
 import org.blockjam.core.config.ConfigKeys;
 import org.blockjam.core.config.ConfigManager;
 import org.spongepowered.api.config.DefaultConfig;
@@ -52,6 +53,7 @@ public final class BlockJamCorePlugin {
     @Inject @DefaultConfig(sharedRoot = false) private ConfigurationLoader<CommentedConfigurationNode> configLoader;
 
     private ConfigManager configManager;
+    private BungeeManager bungeeManager;
 
     @Listener
     public void onInitialization(GameInitializationEvent event) {
@@ -63,6 +65,8 @@ public final class BlockJamCorePlugin {
         } catch (IOException ex) {
             throw new RuntimeException("Failed to load config");
         }
+
+        bungeeManager = new BungeeManager();
     }
 
     public static BlockJamCorePlugin instance() {
@@ -71,6 +75,10 @@ public final class BlockJamCorePlugin {
 
     public static ConfigManager config() {
         return instance().configManager;
+    }
+
+    public static BungeeManager bungeeManager() {
+        return instance().bungeeManager;
     }
 
     public static byte[] getFromAuthority(String key) throws IOException {
