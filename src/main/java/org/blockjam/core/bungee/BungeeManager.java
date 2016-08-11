@@ -27,9 +27,12 @@ package org.blockjam.core.bungee;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.blockjam.core.BlockJamCorePlugin;
+import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.network.ChannelBinding;
+
+import java.util.function.IntConsumer;
 
 /**
  * A manager for controlling BungeeCord networks.
@@ -85,6 +88,34 @@ public class BungeeManager {
     public void transferAllPlayers(BungeeServers server) {
         checkNotNull(server, "server is null!");
         this.transferAllPlayers(server.toString());
+    }
+
+    /**
+     * Gets the player count for the given server.
+     *
+     * @param server The server
+     * @param consumer The consumer for the player count
+     */
+    public void getPlayerCount(String server, IntConsumer consumer) {
+        checkNotNull(server, "server is null!");
+        checkNotNull(consumer, "consumer is null!");
+        this.channel.addListener(Platform.Type.SERVER, (data, connection, side) -> {
+            if (data.readUTF().equalsIgnoreCase(server)) {
+                consumer.accept(data.readInteger());
+            }
+        });
+        this.channel.sendTo(Sponge.getServer().getOnlinePlayers().iterator().next(), buf -> buf.writeUTF("PlayerCount").writeUTF(server));
+    }
+
+    /**
+     * Gets the player count for the given {@link BungeeServers}.
+     *
+     * @param server The server
+     * @param consumer The consumer for the player count
+     */
+    public void getPlayerCount(BungeeServers server, IntConsumer consumer) {
+        checkNotNull(server, "server is null!");
+        this.getPlayerCount(server.toString(), consumer);
     }
 
     /**
