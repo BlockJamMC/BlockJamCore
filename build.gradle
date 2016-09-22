@@ -6,7 +6,7 @@ plugins {
     id 'eclipse'
     id 'checkstyle'
 
-    id 'org.spongepowered.plugin' version '0.6'
+    id 'org.spongepowered.plugin' version '0.7'
     id 'net.minecrell.licenser' version '0.2.1'
 }
 defaultTasks 'clean', 'licenseFormat'
@@ -16,9 +16,7 @@ targetCompatibility = '1.8'
 
 group = 'org.blockjam'
 archivesBaseName = project.name.toLowerCase()
-description = 'Shared code between the BlockJam plugins and minigames.'
 version = '1.0.0-SNAPSHOT'
-ext.url = 'https://blockjam.org/'
 
 repositories {
     mavenCentral()
@@ -36,7 +34,6 @@ dependencies {
 
 license {
     header file('HEADER.txt')
-    include '**/*.java'
 }
 
 // check code style
@@ -111,5 +108,5 @@ uploadArchives {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.13'
+    gradleVersion = '2.14.1'
 }
