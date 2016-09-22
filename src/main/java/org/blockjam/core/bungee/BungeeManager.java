@@ -31,6 +31,9 @@ import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.network.ChannelBinding;
+import org.spongepowered.api.network.ChannelBuf;
+import org.spongepowered.api.network.RawDataListener;
+import org.spongepowered.api.network.RemoteConnection;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
@@ -101,11 +104,16 @@ public class BungeeManager {
     public void getPlayerCount(String server, IntConsumer consumer) {
         checkNotNull(server, "server is null!");
         checkNotNull(consumer, "consumer is null!");
-        this.channel.addListener(Platform.Type.SERVER, (data, connection, side) -> {
-            if (data.readUTF().equalsIgnoreCase(server)) {
-                consumer.accept(data.readInteger());
+        final RawDataListener listener = new RawDataListener() {
+            @Override
+            public void handlePayload(ChannelBuf data, RemoteConnection connection, Platform.Type side) {
+                if (data.readUTF().equalsIgnoreCase(server)) {
+                    consumer.accept(data.readInteger());
+                    BungeeManager.this.channel.removeListener(this);
+                }
             }
-        });
+        };
+        this.channel.addListener(Platform.Type.SERVER, listener);
         this.channel.sendTo(Sponge.getServer().getOnlinePlayers().iterator().next(), buf -> buf.writeUTF("PlayerCount").writeUTF(server));
     }
 
