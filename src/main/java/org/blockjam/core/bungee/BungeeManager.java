@@ -31,6 +31,8 @@ import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.network.ChannelBinding;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.function.IntConsumer;
 
@@ -129,6 +131,18 @@ public class BungeeManager {
         checkNotNull(player, "player is null!");
         checkNotNull(reason, "reason is null!");
         this.channel.sendTo(player, buf -> buf.writeUTF("KickPlayer").writeUTF(player.getName()).writeUTF(reason));
+    }
+
+    /**
+     * Kicks the given {@link Player} for the given reason.
+     *
+     * @param player The player to kick from the network
+     * @param reason The reason
+     */
+    public void kickPlayer(Player player, Text reason) {
+        checkNotNull(player, "player is null!");
+        checkNotNull(reason, "reason is null!");
+        this.kickPlayer(player, TextSerializers.LEGACY_FORMATTING_CODE.serialize(reason));
     }
 
 }
