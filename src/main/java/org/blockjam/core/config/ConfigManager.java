@@ -27,9 +27,6 @@ package org.blockjam.core.config;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataSerializable;
-import org.spongepowered.api.data.persistence.DataTranslators;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,37 +63,27 @@ public class ConfigManager {
     }
 
     /**
-     * @return The config value
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T get(ConfigKey<T> key) {
-        return (T) getNode(key).getValue();
-    }
-
-    /**
-     * @return The {@link DataSerializable} of type T
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends DataSerializable> T get(ConfigKey<T> key, Class<T> classOfT) {
-        return Sponge.getDataManager()
-                .deserialize(classOfT, DataTranslators.CONFIGURATION_NODE.translate(getNode(key)))
-                .orElseThrow(() -> new RuntimeException("Couldn't deserialize DataSerializable!"));
-    }
-
-    /**
      * @return The requested node; Node#getValue() may return null if a value is not set
      */
-    private ConfigurationNode getNodeUnsafe(ConfigKey key) {
+    public ConfigurationNode getNodeUnsafe(ConfigKey key) {
         return this.config.getNode((Object[]) key.getPath());
     }
 
     /**
      * @return The requested node; Node#getValue() is definitely non-null
      */
-    private ConfigurationNode getNode(ConfigKey key) {
+    public ConfigurationNode getNode(ConfigKey key) {
         ConfigurationNode node = getNodeUnsafe(key);
         checkNotNull(node.getValue(), "Cannot retrieve non-existent config key!");
         return node;
+    }
+
+    /**
+     * @return The config value
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T get(ConfigKey<T> key) {
+        return (T) getNode(key).getValue();
     }
 
 }
