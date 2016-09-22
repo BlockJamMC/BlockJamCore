@@ -57,7 +57,6 @@ public class BungeeManager {
      * @param server The server to transfer the {@link Player} to
      */
     public void transferPlayer(Player player, String server) {
-        checkNotNull(this.channel, "channel is null!");
         checkNotNull(player, "player is null!");
         checkNotNull(server, "server is null!");
         this.channel.sendTo(player, buf -> buf.writeUTF("Connect").writeUTF(server));
@@ -80,7 +79,6 @@ public class BungeeManager {
      * @param server The server to transfer the {@link Player}s to
      */
     public void transferAllPlayers(String server) {
-        checkNotNull(this.channel, "channel is null!");
         checkNotNull(server, "server is null!");
         this.channel.sendToAll(buf -> buf.writeUTF("Connect").writeUTF(server));
     }
@@ -135,7 +133,6 @@ public class BungeeManager {
      * @param reason The reason
      */
     public void kickPlayer(Player player, String reason) {
-        checkNotNull(this.channel, "channel is null!");
         checkNotNull(player, "player is null!");
         checkNotNull(reason, "reason is null!");
         this.channel.sendTo(player, buf -> buf.writeUTF("KickPlayer").writeUTF(player.getName()).writeUTF(reason));
