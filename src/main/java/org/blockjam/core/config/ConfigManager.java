@@ -24,14 +24,14 @@
 
 package org.blockjam.core.config;
 
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -63,6 +63,9 @@ public class ConfigManager {
     }
 
     /**
+     * Returns the bare {@link ConfigurationNode} without checking if it contains a value.
+     *
+     * @param key The {@link ConfigKey} to get
      * @return The requested node; Node#getValue() may return null if a value is not set
      */
     public ConfigurationNode getNodeUnsafe(ConfigKey key) {
@@ -70,7 +73,10 @@ public class ConfigManager {
     }
 
     /**
-     * @return The requested node; Node#getValue() is definitely non-null
+     * Returns the bare {@link ConfigurationNode} which definitely is non-null.
+     *
+     * @param key The {@link ConfigKey} to get
+     * @return The requested node; Node#getValue() definitely is non-null
      */
     public ConfigurationNode getNode(ConfigKey key) {
         ConfigurationNode node = getNodeUnsafe(key);
@@ -79,6 +85,9 @@ public class ConfigManager {
     }
 
     /**
+     * Returns the value of type T from the config.
+     *
+     * @param key The {@link ConfigKey} to get
      * @return The config value
      */
     @SuppressWarnings("unchecked")
