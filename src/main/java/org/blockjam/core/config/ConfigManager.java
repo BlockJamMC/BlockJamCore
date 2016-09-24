@@ -24,7 +24,6 @@
 
 package org.blockjam.core.config;
 
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import ninja.leaping.configurate.ConfigurationNode;
