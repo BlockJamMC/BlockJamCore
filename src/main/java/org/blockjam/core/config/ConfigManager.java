@@ -24,6 +24,8 @@
 
 package org.blockjam.core.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -32,8 +34,6 @@ import java.nio.file.Files;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A manager for the configuration.
