@@ -24,12 +24,13 @@
 
 package org.blockjam.core;
 
-import com.google.inject.Inject;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.blockjam.core.bungee.BungeeManager;
 import org.blockjam.core.config.ConfigKeys;
 import org.blockjam.core.config.ConfigManager;
+
+import com.google.inject.Inject;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;

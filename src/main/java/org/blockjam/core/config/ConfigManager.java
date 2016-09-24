@@ -62,11 +62,37 @@ public class ConfigManager {
         loader.save(config);
     }
 
+    /**
+     * Returns the bare {@link ConfigurationNode} without checking if it contains a value.
+     *
+     * @param key The {@link ConfigKey} to get
+     * @return The requested node; Node#getValue() may return null if a value is not set
+     */
+    public ConfigurationNode getNodeUnsafe(ConfigKey key) {
+        return this.config.getNode((Object[]) key.getPath());
+    }
+
+    /**
+     * Returns the bare {@link ConfigurationNode} which definitely is non-null.
+     *
+     * @param key The {@link ConfigKey} to get
+     * @return The requested node; Node#getValue() definitely is non-null
+     */
+    public ConfigurationNode getNode(ConfigKey key) {
+        ConfigurationNode node = getNodeUnsafe(key);
+        checkNotNull(node.getValue(), "Cannot retrieve non-existent config key!");
+        return node;
+    }
+
+    /**
+     * Returns the value of type T from the config.
+     *
+     * @param key The {@link ConfigKey} to get
+     * @return The config value
+     */
     @SuppressWarnings("unchecked")
     public <T> T get(ConfigKey<T> key) {
-        T value = (T) this.config.getNode((Object[]) key.getPath()).getValue();
-        checkNotNull(value, "Cannot retrieve non-existent config key");
-        return value;
+        return (T) getNode(key).getValue();
     }
 
 }
