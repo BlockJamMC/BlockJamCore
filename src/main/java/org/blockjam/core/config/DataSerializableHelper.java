@@ -33,10 +33,11 @@ import java.util.stream.Collectors;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
-public class DataSerializableHelper {
+public final class DataSerializableHelper {
 
     /**
      * Deserializes a {@link ConfigurationNode} to a {@link DataSerializable}.
+     *
      * @param node The {@link ConfigurationNode} to deserialize
      * @return The deserialized {@link DataSerializable} of type T
      */
@@ -49,6 +50,7 @@ public class DataSerializableHelper {
 
     /**
      * Deserializes the children of a {@link ConfigurationNode} to a List of {@link DataSerializable}.
+     *
      * @param node The {@link ConfigurationNode} to deserialize
      * @return The deserialized List of {@link DataSerializable} of type T
      */
