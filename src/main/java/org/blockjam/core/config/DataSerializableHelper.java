@@ -24,14 +24,13 @@
 
 package org.blockjam.core.config;
 
+import ninja.leaping.configurate.ConfigurationNode;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.persistence.DataTranslators;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import ninja.leaping.configurate.ConfigurationNode;
 
 public final class DataSerializableHelper {
 
