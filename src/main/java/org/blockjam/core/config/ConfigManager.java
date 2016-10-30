@@ -24,75 +24,62 @@
 
 package org.blockjam.core.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ConfigurationOptions;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.commented.SimpleCommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
+import ninja.leaping.configurate.objectmapping.ObjectMapper;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.blockjam.core.BlockJamCore;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
-/**
- * A manager for the configuration.
- */
-public class ConfigManager {
+public class ConfigManager<T> {
 
-    private final File configFile;
-    private final ConfigurationLoader<?> loader;
-    private ConfigurationNode config;
+    private HoconConfigurationLoader loader;
+    private CommentedConfigurationNode root = SimpleCommentedConfigurationNode.root();
+    private ObjectMapper<T>.BoundInstance configMapper;
+    private T config;
 
-    public ConfigManager(File configFile, ConfigurationLoader<?> loader) throws IOException {
-        this.configFile = configFile;
-        this.loader = loader;
-        this.config = loader.load();
-    }
+    public ConfigManager(Class<T> type, Path path) {
+        try {
+            Files.createDirectories(path.getParent());
+            if (Files.notExists(path)) {
+                Files.createFile(path);
+            }
 
-    public void loadDefaults() throws IOException {
-        URL defaultsInJarURL = ConfigManager.class.getResource("/default.conf");
-        ConfigurationLoader defaultsLoader = HoconConfigurationLoader.builder().setURL(defaultsInJarURL).build();
-        ConfigurationNode defaults = defaultsLoader.load();
+            this.loader = HoconConfigurationLoader.builder().setPath(path).build();
+            this.configMapper = ObjectMapper.forClass(type).bindToNew();
 
-        if (!configFile.exists()) {
-            Files.createFile(configFile.toPath());
+            this.reload();
+            this.save();
+        } catch (Exception e) {
+            BlockJamCore.logger().error("Failed to initialize configuration", e);
         }
-        config.mergeValuesFrom(defaults);
-        loader.save(config);
     }
 
-    /**
-     * Returns the bare {@link ConfigurationNode} without checking if it contains a value.
-     *
-     * @param key The {@link ConfigKey} to get
-     * @return The requested node; Node#getValue() may return null if a value is not set
-     */
-    public ConfigurationNode getNodeUnsafe(ConfigKey key) {
-        return this.config.getNode((Object[]) key.getPath());
+    public T getConfig() {
+        return this.config;
     }
 
-    /**
-     * Returns the bare {@link ConfigurationNode} which definitely is non-null.
-     *
-     * @param key The {@link ConfigKey} to get
-     * @return The requested node; Node#getValue() definitely is non-null
-     */
-    public ConfigurationNode getNode(ConfigKey key) {
-        ConfigurationNode node = getNodeUnsafe(key);
-        checkNotNull(node.getValue(), "Cannot retrieve non-existent config key!");
-        return node;
+    public void save() {
+        try {
+            this.configMapper.serialize(this.root);
+            this.loader.save(this.root);
+        } catch (IOException | ObjectMappingException e) {
+            BlockJamCore.logger().error("Failed to save configuration", e);
+        }
     }
 
-    /**
-     * Returns the value of type T from the config.
-     *
-     * @param key The {@link ConfigKey} to get
-     * @return The config value
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T get(ConfigKey<T> key) {
-        return (T) getNode(key).getValue();
+    public void reload() {
+        try {
+            this.root = this.loader.load(ConfigurationOptions.defaults());
+            this.config = this.configMapper.populate(this.root);
+        } catch (Exception e) {
+            BlockJamCore.logger().error("Failed to load configuration", e);
+        }
     }
 
 }

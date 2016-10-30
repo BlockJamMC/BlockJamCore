@@ -24,48 +24,45 @@
 
 package org.blockjam.core;
 
-import org.blockjam.core.bungee.BungeeManager;
-import org.blockjam.core.config.ConfigKeys;
-import org.blockjam.core.config.ConfigManager;
+import static org.blockjam.core.BlockJamCore.config;
 
 import com.google.inject.Inject;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.blockjam.core.bungee.BungeeManager;
+import org.blockjam.core.config.ConfigManager;
+import org.blockjam.core.config.CoreConfig;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 @Plugin(id = "blockjamcore", name = "BlockJamCore")
 public final class BlockJamCorePlugin {
 
     private static BlockJamCorePlugin instance;
 
-    @Inject @DefaultConfig(sharedRoot = false) private File configFile;
-    @Inject @DefaultConfig(sharedRoot = false) private ConfigurationLoader<CommentedConfigurationNode> configLoader;
+    @Inject @DefaultConfig(sharedRoot = false) private Path configFile;
 
-    private ConfigManager configManager;
     private BungeeManager bungeeManager;
 
     @Listener
     public void onInitialization(GameInitializationEvent event) {
         instance = this;
 
-        try {
-            configManager = new ConfigManager(configFile, configLoader);
-            configManager.loadDefaults();
-        } catch (IOException ex) {
-            throw new RuntimeException("Failed to load config");
-        }
+        BlockJamCore.setCore(new BlockJamCore() {
+            @Override
+            public ConfigManager<CoreConfig> getConfigManager() {
+                return new ConfigManager<>(CoreConfig.class, BlockJamCorePlugin.this.configFile);
+            }
+        });
 
         bungeeManager = new BungeeManager();
     }
@@ -74,16 +71,12 @@ public final class BlockJamCorePlugin {
         return instance;
     }
 
-    public static ConfigManager config() {
-        return instance().configManager;
-    }
-
     public static BungeeManager bungeeManager() {
         return instance().bungeeManager;
     }
 
     public static byte[] getFromAuthority(String key) throws IOException {
-        String url = config().get(ConfigKeys.AUTHORITY_URL);
+        String url = config().getConfig().getAuthority().getUrl();
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             connection.setDoOutput(true);
@@ -112,4 +105,5 @@ public final class BlockJamCorePlugin {
             throw new RuntimeException("Encountered connection error while contacting authority server", ex);
         }
     }
+
 }

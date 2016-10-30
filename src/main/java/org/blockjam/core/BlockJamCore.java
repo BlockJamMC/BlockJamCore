@@ -22,42 +22,39 @@
  * THE SOFTWARE.
  */
 
-package org.blockjam.core.util;
+package org.blockjam.core;
 
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
-
-import java.util.function.Consumer;
+import org.blockjam.core.config.ConfigManager;
+import org.blockjam.core.config.CoreConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Counts down on a broadcast channel until
- * runs out and calls function given.
+ * The brains of the <strike>bird</strike>, uhm the something of the jam?
  */
-public class CountdownTask implements Consumer<Task> {
+public abstract class BlockJamCore {
 
-    private int timeLeft;
-    private CountdownTask.MessageFunction messageFunc;
-    private Runnable announceRunnable;
+    private static BlockJamCore $ = null;
+    private static final Logger LOGGER = LoggerFactory.getLogger("BlockJamCore");
 
-    public CountdownTask(int timeToCountdown, CountdownTask.MessageFunction message, Runnable announceRunnable) {
-        this.timeLeft = timeToCountdown;
-        this.messageFunc = message;
-        this.announceRunnable = announceRunnable;
-    }
-
-    @Override
-    public void accept(Task task) {
-        --timeLeft;
-        Sponge.getServer().getBroadcastChannel().send(messageFunc.f(timeLeft));
-        if (timeLeft <= 0) {
-            announceRunnable.run();
-            task.cancel();
+    static void setCore(BlockJamCore core) {
+        if ($ != null) {
+            throw new RuntimeException("BlockJamCore was already initialised!");
         }
+        $ = core;
     }
 
-    public interface MessageFunction {
-        Text f(int timeLeft);
+    public static Logger logger() {
+        return LOGGER;
     }
+
+    public static ConfigManager<CoreConfig> config() {
+        return $.getConfigManager();
+    }
+
+    protected BlockJamCore() {
+    }
+
+    public abstract ConfigManager<CoreConfig> getConfigManager();
 
 }

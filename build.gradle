@@ -84,9 +84,9 @@ uploadArchives {
                     url = project.url
 
                     scm {
-                        url = "https://github.com/BlockJamMC/BlockJamCore"
-                        connection = "scm:git:https://github.com/BlockJamMC/BlockJamCore.git"
-                        developerConnection = "scm:git:git@github.com:BlockJamMC/BlockJamCore.git"
+                        url = 'https://github.com/BlockJamMC/BlockJamCore'
+                        connection = 'scm:git:https://github.com/BlockJamMC/BlockJamCore.git'
+                        developerConnection = 'scm:git:git@github.com:BlockJamMC/BlockJamCore.git'
                     }
 
                     issueManagement {

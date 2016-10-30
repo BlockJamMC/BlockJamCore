@@ -22,42 +22,11 @@
  * THE SOFTWARE.
  */
 
-package org.blockjam.core.util;
+package org.blockjam.core.config.category;
 
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-import java.util.function.Consumer;
-
-/**
- * Counts down on a broadcast channel until
- * runs out and calls function given.
- */
-public class CountdownTask implements Consumer<Task> {
-
-    private int timeLeft;
-    private CountdownTask.MessageFunction messageFunc;
-    private Runnable announceRunnable;
-
-    public CountdownTask(int timeToCountdown, CountdownTask.MessageFunction message, Runnable announceRunnable) {
-        this.timeLeft = timeToCountdown;
-        this.messageFunc = message;
-        this.announceRunnable = announceRunnable;
-    }
-
-    @Override
-    public void accept(Task task) {
-        --timeLeft;
-        Sponge.getServer().getBroadcastChannel().send(messageFunc.f(timeLeft));
-        if (timeLeft <= 0) {
-            announceRunnable.run();
-            task.cancel();
-        }
-    }
-
-    public interface MessageFunction {
-        Text f(int timeLeft);
-    }
+@ConfigSerializable
+public abstract class ConfigCategory {
 
 }
