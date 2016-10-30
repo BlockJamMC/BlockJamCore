@@ -24,9 +24,8 @@
 
 package org.blockjam.core;
 
-import static org.blockjam.core.BlockJamCore.config;
-
 import com.google.inject.Inject;
+import org.blockjam.core.authority.AuthorityClient;
 import org.blockjam.core.bungee.BungeeManager;
 import org.blockjam.core.config.ConfigManager;
 import org.blockjam.core.config.CoreConfig;
@@ -35,75 +34,31 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 @Plugin(id = "blockjamcore", name = "BlockJamCore")
 public final class BlockJamCorePlugin {
 
-    private static BlockJamCorePlugin instance;
-
     @Inject @DefaultConfig(sharedRoot = false) private Path configFile;
-
-    private BungeeManager bungeeManager;
 
     @Listener
     public void onInitialization(GameInitializationEvent event) {
-        instance = this;
-
         BlockJamCore.setCore(new BlockJamCore() {
             @Override
             public ConfigManager<CoreConfig> getConfigManager() {
                 return new ConfigManager<>(CoreConfig.class, BlockJamCorePlugin.this.configFile);
             }
+
+            @Override
+            public BungeeManager getBungeeManager() {
+                return new BungeeManager();
+            }
+
+            @Override
+            public AuthorityClient getAuthorityClient() {
+                return new AuthorityClient();
+            }
         });
-
-        bungeeManager = new BungeeManager();
-    }
-
-    public static BlockJamCorePlugin instance() {
-        return instance;
-    }
-
-    public static BungeeManager bungeeManager() {
-        return instance().bungeeManager;
-    }
-
-    public static byte[] getFromAuthority(String key) throws IOException {
-        String url = config().getConfig().getAuthority().getUrl();
-        try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setDoOutput(true);
-            connection.setRequestMethod("POST");
-            byte[] params = ("key=" + key).getBytes(StandardCharsets.UTF_8);
-            connection.setFixedLengthStreamingMode(params.length);
-            OutputStream os = connection.getOutputStream();
-            os.write(params);
-            // connection.connect() can be omitted because getResponseCode() calls it automatically
-            if (connection.getResponseCode() / 100 != 2) {
-                // this just gets caught down below
-                throw new IOException("Received bad response code from authority server ("
-                        + connection.getResponseCode() + " " + connection.getResponseMessage() + ")");
-            }
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int i;
-            while ((i = connection.getInputStream().read(buffer)) != -1) {
-                baos.write(buffer, 0, i);
-            }
-            return baos.toByteArray();
-        } catch (MalformedURLException ex) {
-            throw new RuntimeException("Invalid config value for `authority-url`", ex);
-        } catch (IOException ex) {
-            throw new RuntimeException("Encountered connection error while contacting authority server", ex);
-        }
     }
 
 }

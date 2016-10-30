@@ -24,6 +24,8 @@
 
 package org.blockjam.core;
 
+import org.blockjam.core.authority.AuthorityClient;
+import org.blockjam.core.bungee.BungeeManager;
 import org.blockjam.core.config.ConfigManager;
 import org.blockjam.core.config.CoreConfig;
 import org.slf4j.Logger;
@@ -52,9 +54,21 @@ public abstract class BlockJamCore {
         return $.getConfigManager();
     }
 
+    public static BungeeManager bungeeManager() {
+        return $.getBungeeManager();
+    }
+
+    public static AuthorityClient authority() {
+        return $.getAuthorityClient();
+    }
+
     protected BlockJamCore() {
     }
 
     public abstract ConfigManager<CoreConfig> getConfigManager();
+
+    public abstract BungeeManager getBungeeManager();
+
+    public abstract AuthorityClient getAuthorityClient();
 
 }
