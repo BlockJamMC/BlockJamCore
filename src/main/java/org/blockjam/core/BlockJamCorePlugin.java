@@ -39,10 +39,18 @@ import java.nio.file.Path;
 @Plugin(id = "blockjamcore", name = "BlockJamCore")
 public final class BlockJamCorePlugin {
 
+    private static BlockJamCorePlugin INSTANCE;
+
     @Inject @DefaultConfig(sharedRoot = false) private Path configFile;
+
+    public static BlockJamCorePlugin instance() {
+        return INSTANCE;
+    }
 
     @Listener
     public void onInitialization(GameInitializationEvent event) {
+        INSTANCE = this;
+
         BlockJamCore.setCore(new BlockJamCore() {
             @Override
             public ConfigManager<CoreConfig> getConfigManager() {
