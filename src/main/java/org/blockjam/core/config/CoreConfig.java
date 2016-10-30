@@ -24,33 +24,16 @@
 
 package org.blockjam.core.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import ninja.leaping.configurate.objectmapping.Setting;
+import org.blockjam.core.config.category.AuthorityCategory;
 
-/**
- * Represents a configuration key.
- *
- * @param <T> The type of which the key represents
- */
-public final class ConfigKey<T> {
+public class CoreConfig {
 
-    private final String[] path;
+    @Setting
+    private AuthorityCategory authority = new AuthorityCategory();
 
-    protected ConfigKey(String[] path) {
-        this.path = path;
-    }
-
-    /**
-     * Returns the path of this configuration key.
-     *
-     * @return The path
-     */
-    public final String[] getPath() {
-        return this.path;
-    }
-
-    public static <T> ConfigKey<T> of(String... path) {
-        checkNotNull(path, "path is null!");
-        return new ConfigKey<>(path);
+    public AuthorityCategory getAuthority() {
+        return this.authority;
     }
 
 }

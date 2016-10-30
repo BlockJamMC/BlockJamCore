@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.spongepowered:spongeapi:5.0.0-SNAPSHOT'
+    compile 'org.spongepowered:spongeapi:5.1.0-SNAPSHOT'
 
     checkstyle 'org.spongepowered:checkstyle:6.1.1-sponge1'
 }
@@ -84,9 +84,9 @@ uploadArchives {
                     url = project.url
 
                     scm {
-                        url = "https://github.com/BlockJamMC/BlockJamCore"
-                        connection = "scm:git:https://github.com/BlockJamMC/BlockJamCore.git"
-                        developerConnection = "scm:git:git@github.com:BlockJamMC/BlockJamCore.git"
+                        url = 'https://github.com/BlockJamMC/BlockJamCore'
+                        connection = 'scm:git:https://github.com/BlockJamMC/BlockJamCore.git'
+                        developerConnection = 'scm:git:git@github.com:BlockJamMC/BlockJamCore.git'
                     }
 
                     issueManagement {

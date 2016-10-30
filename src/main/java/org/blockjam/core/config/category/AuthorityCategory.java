@@ -22,15 +22,19 @@
  * THE SOFTWARE.
  */
 
-package org.blockjam.core.config;
+package org.blockjam.core.config.category;
 
-import static org.blockjam.core.config.ConfigKey.of;
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-/**
- * A list of all available config keys from BlockJamCore.
- */
-public final class ConfigKeys {
+@ConfigSerializable
+public class AuthorityCategory extends ConfigCategory {
 
-    public static final ConfigKey<String> AUTHORITY_URL = of("authority-url");
+    @Setting(comment = "The URL to the Authority server being used")
+    private String url = "http://authority.bj.lexteam.xyz";
+
+    public String getUrl() {
+        return this.url;
+    }
 
 }

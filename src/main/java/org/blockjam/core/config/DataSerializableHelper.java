@@ -44,7 +44,7 @@ public final class DataSerializableHelper {
     public static <T extends DataSerializable> T deserializeNode(Class<T> classOfT, ConfigurationNode node) {
         return Sponge.getDataManager()
                 .deserialize(classOfT, DataTranslators.CONFIGURATION_NODE.translate(node))
-                .orElseThrow(() -> new RuntimeException(("Couldn't deserialize DataSerializable!")));
+                .orElseThrow(() -> new RuntimeException("Couldn't deserialize DataSerializable!"));
     }
 
     /**
@@ -60,4 +60,5 @@ public final class DataSerializableHelper {
                 .map(n -> DataSerializableHelper.deserializeNode(classOfT, n))
                 .collect(Collectors.toList());
     }
+
 }
