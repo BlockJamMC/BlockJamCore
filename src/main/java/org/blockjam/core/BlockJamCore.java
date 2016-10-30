@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The brains of the <strike>bird</strike>, uhm the something of the jam?
+ * The brains of the <s>bird</s>, uhm the something of the jam?
  */
 public abstract class BlockJamCore {
 
